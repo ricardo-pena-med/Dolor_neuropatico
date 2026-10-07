@@ -15,6 +15,12 @@ pnpm dev
 
 Los cambios guardados en los componentes se reflejan automáticamente en la vista previa. El servidor escucha exclusivamente en este equipo. La aplicación no se ha publicado.
 
+## Navegar entre herramientas
+
+Al volver a Inicio, **Retomar escenario** conserva los datos ingresados, el plan elegido y las casillas marcadas, incluso si se consultan otras herramientas. El resumen del escenario muestra diagnóstico, edad e intensidad del dolor.
+
+**Editar datos** permite ajustar el perfil y volver a analizarlo. **Nuevo escenario** reinicia los datos y el plan. La conservación se limita a la navegación actual: recargar o cerrar la página reinicia el escenario.
+
 ## Archivos para ajustar
 
 - [App.tsx](App.tsx): navegación y estado de la aplicación.

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { PatientProfile, Diagnosis, ConcomitantDrug } from '../types';
 import { DIAGNOSIS_OPTIONS, CONCOMITANT_DRUGS_OPTIONS } from '../constants';
 
 interface PatientProfileFormProps {
-  initialProfile: PatientProfile;
+  profile: PatientProfile;
+  onChange: (profile: PatientProfile) => void;
   onSubmit: (profile: PatientProfile) => void;
 }
 
@@ -25,21 +26,16 @@ const MultiSelectCheckbox: React.FC<{
     </label>
 );
 
-const PatientProfileForm: React.FC<PatientProfileFormProps> = ({ initialProfile, onSubmit }) => {
-  const [profile, setProfile] = useState<PatientProfile>(initialProfile);
-
+const PatientProfileForm: React.FC<PatientProfileFormProps> = ({ profile, onChange, onSubmit }) => {
   const handleChange = <K extends keyof PatientProfile>(field: K, value: PatientProfile[K]) => {
-    setProfile(prev => ({ ...prev, [field]: value }));
+    onChange({ ...profile, [field]: value });
   };
   
   const handleDrugChange = (drugId: ConcomitantDrug, isSelected: boolean) => {
-    setProfile(prev => {
-        const currentDrugs = prev.concomitantDrugs;
-        const newDrugs = isSelected 
-            ? [...currentDrugs, drugId]
-            : currentDrugs.filter(d => d !== drugId);
-        return { ...prev, concomitantDrugs: newDrugs };
-    });
+    const newDrugs = isSelected
+        ? [...profile.concomitantDrugs, drugId]
+        : profile.concomitantDrugs.filter(d => d !== drugId);
+    onChange({ ...profile, concomitantDrugs: newDrugs });
   };
 
   const handleSubmit = (e: React.FormEvent) => {

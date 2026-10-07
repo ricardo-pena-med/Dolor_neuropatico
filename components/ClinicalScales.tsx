@@ -170,7 +170,10 @@ const ClinicalScales: React.FC = () => {
             let text = "Dolor Leve";
             let advice = "Revaluar si persiste. Tratamiento escalonado según necesidad.";
             
-            if (score >= 4 && score <= 6) {
+            if (score === 0) {
+                text = "Sin dolor";
+                advice = "No refiere dolor en esta evaluación.";
+            } else if (score >= 4 && score <= 6) {
                 color = 'bg-yellow-100 text-yellow-800 border-yellow-200';
                 text = "Dolor Moderado";
                 advice = "Considerar ajuste de dosis o terapia combinada. Impacto en funcionalidad probable.";

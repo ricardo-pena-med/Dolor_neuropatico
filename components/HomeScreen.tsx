@@ -10,6 +10,7 @@ import { ScaleIcon } from './icons/ScaleIcon';
 import { BarsArrowUpIcon } from './icons/BarsArrowUpIcon';
 
 interface HomeScreenProps {
+  hasScenario: boolean;
   onSelectFlow: (flow: AppFlow) => void;
   onViewPharmacology: (medication: Medication) => void;
 }
@@ -34,7 +35,7 @@ const FlowCard: React.FC<{
   </button>
 );
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectFlow, onViewPharmacology }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ hasScenario, onSelectFlow, onViewPharmacology }) => {
   const medications = Object.keys(PHARMACOLOGY_DATA_MAP) as Medication[];
 
   return (
@@ -47,8 +48,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ onSelectFlow, onViewPharmacolog
       <div className="space-y-6">
         <FlowCard
           icon={<UserCircleIcon className="w-8 h-8" />}
-          title="Analizar Escenario de Paciente"
-          description="Ingrese el perfil de un paciente para recibir un análisis de opciones de tratamiento y manejo de comorbilidades."
+          title={hasScenario ? 'Retomar escenario' : 'Analizar Escenario de Paciente'}
+          description={hasScenario ? 'Continúe con los datos y el plan que estaba revisando.' : 'Ingrese el perfil de un paciente para recibir un análisis de opciones de tratamiento y manejo de comorbilidades.'}
           onClick={() => onSelectFlow('PATIENT_SCENARIO')}
         />
         <FlowCard

@@ -4,6 +4,7 @@ import { PatientProfile, PatientScenarioState, Medication, MedicationAnalysis, A
 import { analyzeScenario, buildChecklistFromAnalysis } from './services/clinicalAnalysisService';
 import { getAdditionalInfo } from './services/geminiService';
 import { PHARMACOLOGY_DATA_MAP } from './services/pharmacologyData';
+import { DIAGNOSIS_OPTIONS } from './constants';
 
 import Header from './components/Header';
 import PatientProfileForm from './components/PatientProfileForm';
@@ -39,6 +40,7 @@ const initialProfile: PatientProfile = {
 export default function App() {
   const [appFlow, setAppFlow] = useState<AppFlow>('HOME');
   const [patientScenarioState, setPatientScenarioState] = useState<PatientScenarioState>('PROFILE_INPUT');
+  const [hasScenario, setHasScenario] = useState(false);
   
   const [profile, setProfile] = useState<PatientProfile>(initialProfile);
   const [analysis, setAnalysis] = useState<MedicationAnalysis[]>([]);
@@ -56,6 +58,8 @@ export default function App() {
     setProfile(submittedProfile);
     const scenarioAnalysis = analyzeScenario(submittedProfile);
     setAnalysis(scenarioAnalysis);
+    setSelectedAnalysis(null);
+    setCheckedItems({});
     setPatientScenarioState('ANALYSIS_DASHBOARD');
   }, []);
   
@@ -71,16 +75,26 @@ export default function App() {
     }
   }, [analysis, profile]);
 
-  const resetPatientScenario = () => {
+  const handleNewScenario = useCallback(() => {
     setProfile(initialProfile);
     setAnalysis([]);
     setSelectedAnalysis(null);
     setCheckedItems({});
     setPatientScenarioState('PROFILE_INPUT');
-  };
+    setHasScenario(true);
+    setAppFlow('PATIENT_SCENARIO');
+  }, []);
+
+  const handleSelectFlow = useCallback((flow: AppFlow) => {
+    if (flow === 'PATIENT_SCENARIO') setHasScenario(true);
+    setAppFlow(flow);
+  }, []);
+
+  const handleProfileChange = useCallback((updatedProfile: PatientProfile) => {
+    setProfile(updatedProfile);
+  }, []);
 
   const handleGoToHome = useCallback(() => {
-    resetPatientScenario();
     setAppFlow('HOME');
   }, []);
 
@@ -130,7 +144,7 @@ export default function App() {
   const renderPatientScenario = () => {
     switch(patientScenarioState) {
       case 'PROFILE_INPUT':
-        return <PatientProfileForm initialProfile={profile} onSubmit={handleProfileSubmit} />;
+        return <PatientProfileForm profile={profile} onChange={handleProfileChange} onSubmit={handleProfileSubmit} />;
       case 'ANALYSIS_DASHBOARD':
         return <AnalysisDashboard analysis={analysis} onSelectMedication={handleSelectMedication} onViewDetails={handleViewPharmaDetails} />;
       case 'CHECKLIST_VIEW':
@@ -153,7 +167,7 @@ export default function App() {
   const renderContent = () => {
     switch (appFlow) {
         case 'HOME':
-            return <HomeScreen onSelectFlow={setAppFlow} onViewPharmacology={handleViewPharmaDetails} />;
+            return <HomeScreen hasScenario={hasScenario} onSelectFlow={handleSelectFlow} onViewPharmacology={handleViewPharmaDetails} />;
         case 'PATIENT_SCENARIO':
             return renderPatientScenario();
         case 'PAIN_PATHWAY_EXPLORER':
@@ -167,7 +181,7 @@ export default function App() {
         case 'TITRATION_GUIDE':
             return <TitrationGuide />;
         default:
-            return <HomeScreen onSelectFlow={setAppFlow} onViewPharmacology={handleViewPharmaDetails}/>;
+            return <HomeScreen hasScenario={hasScenario} onSelectFlow={handleSelectFlow} onViewPharmacology={handleViewPharmaDetails}/>;
     }
   }
 
@@ -184,6 +198,28 @@ export default function App() {
         />
         
         <main>
+          {appFlow === 'PATIENT_SCENARIO' && (
+            <section aria-label="Escenario actual" className="mb-6 rounded-xl border border-slate-200 bg-white p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 className="text-sm font-semibold text-blue-900">Escenario actual</h2>
+                <p className="mt-1 text-sm text-slate-700">
+                  {DIAGNOSIS_OPTIONS.find(option => option.id === profile.diagnosis)?.name}
+                  {' · '}{profile.age} años{' · '}Dolor {profile.painScore}/10
+                </p>
+                <p className="mt-1 text-xs text-slate-500">Puede consultar otras herramientas y retomar este escenario.</p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {patientScenarioState !== 'PROFILE_INPUT' && (
+                  <button type="button" onClick={() => setPatientScenarioState('PROFILE_INPUT')} className="px-3 py-2 text-sm font-medium text-blue-800 border border-blue-200 rounded-md hover:bg-blue-50">
+                    Editar datos
+                  </button>
+                )}
+                <button type="button" onClick={handleNewScenario} className="px-3 py-2 text-sm font-medium text-slate-700 border border-slate-300 rounded-md hover:bg-slate-50">
+                  Nuevo escenario
+                </button>
+              </div>
+            </section>
+          )}
           {renderContent()}
         </main>
 
