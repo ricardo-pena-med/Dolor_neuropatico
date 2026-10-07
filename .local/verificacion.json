@@ -1,0 +1,20 @@
+{
+  "fecha": "2026-10-07",
+  "comprobaciones_en_navegador": [
+    "inicio",
+    "perfil y análisis de escenario renal",
+    "selección de pregabalina y progreso de lista",
+    "aviso de explicación sin Gemini",
+    "algoritmo: transición del paso 1 al 2",
+    "titulación: cambio a gabapentina",
+    "ficha de duloxetina: pestaña interacciones",
+    "explorador sináptico: selección de pregabalina",
+    "glosario",
+    "chat: aviso de configuración pendiente",
+    "DN4: cuatro respuestas dan 4/10",
+    "NRS: valor 1",
+    "BPI: dolor 1 e interferencia 1/7 redondeada a 0.1"
+  ],
+  "contenido_cientifico": "conservado, sin validación clínica",
+  "gemini_con_clave": "no probado"
+}
